@@ -1,0 +1,13 @@
+http://blog.csdn.net/u012527560/article/details/51867368
+
+Java 基础知识 
+了解一些 常用东西的原理，例如：handler， thread 等 
+项目中的技术点 
+
+
+Android 事件分发机制原理 
+Android 绘图机制原理 
+WindowManager 的相关知识 
+进程间传输方式 
+Java 内存管理机制 
+一些常用的 list,map 原理，以及子类之间的差别 
