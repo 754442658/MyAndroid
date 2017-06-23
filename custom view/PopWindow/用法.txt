@@ -1,0 +1,3 @@
+ popW = new PopPhoto(this, clickListener);
+                    popW.showAtLocation(findViewById(R.id.activity_private_chat),
+                            Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
