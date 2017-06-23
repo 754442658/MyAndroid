@@ -1,0 +1,36 @@
+平行图和交叉图
+平行眼和交叉眼
+
+里面大量资源，图片以平行为主少量交叉（cross-eyed）
+http://hidden-3d.com/ （国外）
+
+环世界下载地址：
+
+【下载地址】
+前往官方GitHub的简体中文项目
+点击“Clone or download”，再点击“Download ZIP”
+项目地址： https://github.com/Ludeon/RimWorld-ChineseSimplified
+
+项目上的翻译是随时更新的，保持最新，并且下次游戏更新后将会内置进游戏
+如果你打不开GitHub网站，可以前往起灵的网盘下载
+（但内容可能不是最新的）
+起灵的网盘： http://tieba.baidu.com/p/4554059994
+
+【安装方法】
+下载汉化包 解压得到新的ChineseSimplified文件夹
+打开文件夹 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\Core\Languages
+删除原有的 ChineseSimplified文件夹
+将新的 ChineseSimplified文件夹 复制进去
+（注：根据你的Steam自定义设置，游戏的安装目录可能不同）
+
+环世界mod地址：
+
+【A15 国内Mod汇总】国内Mod【汇总贴】
+http://tieba.baidu.com/p/4818442937
+【A15 国外Mod汇总】【已汉化】国外Mod【汇总贴】
+http://tieba.baidu.com/p/4818444435
+【A15 国外Mod汇总】【无需汉化】的国外Mod【汇总贴】
+http://tieba.baidu.com/p/4818480381
+
+
+http://blog.csdn.net/u012527560/article/details/51867368
