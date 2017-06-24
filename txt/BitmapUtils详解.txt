@@ -1,0 +1,718 @@
+/**
+ * 加载图片工具类
+ * @author afu
+ *
+ */
+public class BitmapUtils implements TaskHandler {
+
+	/**
+	 * 判断任务是否暂停
+	 */
+    private boolean pauseTask = false;
+    /**
+     * 是否取消所有任务
+     */
+    private boolean cancelAllTask = false;
+    private final Object pauseTaskLock = new Object();
+
+    /**
+     * Android上下文
+     */
+    private Context context;
+    private BitmapGlobalConfig globalConfig;
+    private BitmapDisplayConfig defaultDisplayConfig;
+
+    /////////////////////////////////////////////// create ///////////////////////////////////////////////////
+    /**
+     * 
+     * @param context 上下文
+     */
+    public BitmapUtils(Context context) {
+        this(context, null);
+    }
+
+    /**
+     * 
+     * @param context 上下文
+     * @param diskCachePath 磁盘高速缓存路径
+     */
+    public BitmapUtils(Context context, String diskCachePath) {
+        if (context == null) {
+            throw new IllegalArgumentException("context may not be null");
+        }
+
+        this.context = context.getApplicationContext();
+        globalConfig = BitmapGlobalConfig.getInstance(this.context, diskCachePath);
+        defaultDisplayConfig = new BitmapDisplayConfig();
+    }
+
+    /**
+     * 
+     * @param context 上下文
+     * @param diskCachePath 磁盘高速缓存路径
+     * @param memoryCacheSize 内存缓存空间大小
+     */
+    public BitmapUtils(Context context, String diskCachePath, int memoryCacheSize) {
+        this(context, diskCachePath);
+        globalConfig.setMemoryCacheSize(memoryCacheSize);
+    }
+
+    /**
+     * 
+     * @param context 上下文
+     * @param diskCachePath 磁盘高速缓存路径
+     * @param memoryCacheSize 内存缓存空间大小
+     * @param diskCacheSize 磁盘高速缓存空间大小
+     */
+    public BitmapUtils(Context context, String diskCachePath, int memoryCacheSize, int diskCacheSize) {
+        this(context, diskCachePath);
+        globalConfig.setMemoryCacheSize(memoryCacheSize);
+        globalConfig.setDiskCacheSize(diskCacheSize);
+    }
+
+    /**
+     * 
+     * @param context 上下文
+     * @param diskCachePath 磁盘高速缓存路径
+     * @param memoryCachePercent 内存缓存百分比
+     */
+    public BitmapUtils(Context context, String diskCachePath, float memoryCachePercent) {
+        this(context, diskCachePath);
+        globalConfig.setMemCacheSizePercent(memoryCachePercent);
+    }
+
+    /**
+     * 
+     * @param context 上下文
+     * @param diskCachePath  磁盘高速缓存路径
+     * @param memoryCachePercent 内存缓存百分比
+     * @param diskCacheSize 磁盘缓存空间大小
+     */
+    public BitmapUtils(Context context, String diskCachePath, float memoryCachePercent, int diskCacheSize) {
+        this(context, diskCachePath);
+        globalConfig.setMemCacheSizePercent(memoryCachePercent);
+        globalConfig.setDiskCacheSize(diskCacheSize);
+    }
+
+    //////////////////////////////////////// config  配置////////////////////////////////////////////////////////////////////
+
+    /**
+     * 配置默认加载drawable类型资源图片
+     * @param drawable
+     * @return
+     */
+    public BitmapUtils configDefaultLoadingImage(Drawable drawable) {
+        defaultDisplayConfig.setLoadingDrawable(drawable);
+        return this;
+    }
+
+    /**
+     * 配置默认加载资源id类型资源图片
+     * @param resId
+     * @return
+     */
+    public BitmapUtils configDefaultLoadingImage(int resId) {
+        defaultDisplayConfig.setLoadingDrawable(context.getResources().getDrawable(resId));
+        return this;
+    }
+
+    /**
+     * 配置默认加载图片
+     * @param bitmap bitmap类中的资源图片
+     * @return
+     */
+    public BitmapUtils configDefaultLoadingImage(Bitmap bitmap) {
+        defaultDisplayConfig.setLoadingDrawable(new BitmapDrawable(context.getResources(), bitmap));
+        return this;
+    }
+
+    /**
+     * 设置默认加载失败的图片
+     * @param drawable drawable类型的资源图片
+     * @return
+     */
+    public BitmapUtils configDefaultLoadFailedImage(Drawable drawable) {
+        defaultDisplayConfig.setLoadFailedDrawable(drawable);
+        return this;
+    }
+
+    /**
+     * 配置默认加载失败图片，加载id类型资源图片
+     * @param resId
+     * @return
+     */
+    public BitmapUtils configDefaultLoadFailedImage(int resId) {
+        defaultDisplayConfig.setLoadFailedDrawable(context.getResources().getDrawable(resId));
+        return this;
+    }
+
+    /**
+     * 配置默认加载失败图片，加载Bitmap类型资源图片
+     * @param bitmap
+     * @return
+     */
+    public BitmapUtils configDefaultLoadFailedImage(Bitmap bitmap) {
+        defaultDisplayConfig.setLoadFailedDrawable(new BitmapDrawable(context.getResources(), bitmap));
+        return this;
+    }
+
+    /**
+     * 配置默认图片最大宽和高
+     * @param maxWidth 最大宽
+     * @param maxHeight 最大高
+     * @return
+     */
+    public BitmapUtils configDefaultBitmapMaxSize(int maxWidth, int maxHeight) {
+        defaultDisplayConfig.setBitmapMaxSize(new BitmapSize(maxWidth, maxHeight));
+        return this;
+    }
+
+    /**
+     * 配置默认位图最大图片参数
+     * @param maxSize 最大图片参数类
+     * @return
+     */
+    public BitmapUtils configDefaultBitmapMaxSize(BitmapSize maxSize) {
+        defaultDisplayConfig.setBitmapMaxSize(maxSize);
+        return this;
+    }
+
+    /**
+     * 配置默认图片加载动画
+     * @param animation 动画
+     * @return
+     */
+    public BitmapUtils configDefaultImageLoadAnimation(Animation animation) {
+        defaultDisplayConfig.setAnimation(animation);
+        return this;
+    }
+
+    /**
+     * 配置默认自动旋转动画
+     * @param autoRotation
+     * @return
+     */
+    public BitmapUtils configDefaultAutoRotation(boolean autoRotation) {
+        defaultDisplayConfig.setAutoRotation(autoRotation);
+        return this;
+    }
+
+    /**
+     * 配置默认是否显示原始图片
+     * @param showOriginal true:显示原始图片，false：将会对图片压缩处理
+     * @return
+     */
+    public BitmapUtils configDefaultShowOriginal(boolean showOriginal) {
+        defaultDisplayConfig.setShowOriginal(showOriginal);
+        return this;
+    }
+
+    /**
+     * 配置默认图片配置，传入Bitmap.Config类型
+     * @param config
+     * @return
+     */
+    public BitmapUtils configDefaultBitmapConfig(Bitmap.Config config) {
+        defaultDisplayConfig.setBitmapConfig(config);
+        return this;
+    }
+
+    /**
+     * 配置默认显示配置
+     * @param displayConfig
+     * @return
+     */
+    public BitmapUtils configDefaultDisplayConfig(BitmapDisplayConfig displayConfig) {
+        defaultDisplayConfig = displayConfig;
+        return this;
+    }
+
+    /**
+     * 配置下载参数
+     * @param downloader
+     * @return
+     */
+    public BitmapUtils configDownloader(Downloader downloader) {
+        globalConfig.setDownloader(downloader);
+        return this;
+    }
+
+    /**
+     * 配置默认缓存失效
+     * @param defaultExpiry
+     * @return
+     */
+    public BitmapUtils configDefaultCacheExpiry(long defaultExpiry) {
+        globalConfig.setDefaultCacheExpiry(defaultExpiry);
+        return this;
+    }
+
+    /**
+     * 配置默认链接时间超时时间
+     * @param connectTimeout  毫秒单位
+     * @return
+     */
+    public BitmapUtils configDefaultConnectTimeout(int connectTimeout) {
+        globalConfig.setDefaultConnectTimeout(connectTimeout);
+        return this;
+    }
+
+    /**
+     * 配置默认读取超时时间
+     * @param readTimeout 毫秒
+     * @return
+     */
+    public BitmapUtils configDefaultReadTimeout(int readTimeout) {
+        globalConfig.setDefaultReadTimeout(readTimeout);
+        return this;
+    }
+
+    /**
+     * 配置线程池多少
+     * @param threadPoolSize 线程池数
+     * 此参数没有设置，默认是设置5个核心线程池
+     * @return
+     */
+    public BitmapUtils configThreadPoolSize(int threadPoolSize) {
+        globalConfig.setThreadPoolSize(threadPoolSize);
+        return this;
+    }
+
+    /**
+     * 配置内存缓存是否启用，默认是启用的
+     * @param enabled
+     * @return
+     */
+    public BitmapUtils configMemoryCacheEnabled(boolean enabled) {
+        globalConfig.setMemoryCacheEnabled(enabled);
+        return this;
+    }
+
+    /**
+     * 配置磁盘缓存功能，默认是启用的
+     * @param enabled
+     * @return
+     */
+    public BitmapUtils configDiskCacheEnabled(boolean enabled) {
+        globalConfig.setDiskCacheEnabled(enabled);
+        return this;
+    }
+
+    /**
+     * 配置原始磁盘缓存文件名称
+     * @param fileNameGenerator
+     * @return
+     */
+    public BitmapUtils configDiskCacheFileNameGenerator(FileNameGenerator fileNameGenerator) {
+        globalConfig.setFileNameGenerator(fileNameGenerator);
+        return this;
+    }
+
+    /**
+     * 配置位图缓存监听
+     * @param listener
+     * @return
+     */
+    public BitmapUtils configBitmapCacheListener(BitmapCacheListener listener) {
+        globalConfig.setBitmapCacheListener(listener);
+        return this;
+    }
+
+    ////////////////////////// display  显示////////////////////////////////////
+
+    /**
+     * 根据图片路径，显示到具体的View上
+     * @param container 要把图片显示到的View
+     * @param uri 图片路径
+     */
+    public <T extends View> void display(T container, String uri) {
+        display(container, uri, null, null);
+    }
+
+    /**
+     * 根据图片路径，显示到具体的View上
+     * @param container 要把图片显示到的View
+     * @param uri 图片路径
+     * @param displayConfig
+     */
+    public <T extends View> void display(T container, String uri, BitmapDisplayConfig displayConfig) {
+        display(container, uri, displayConfig, null);
+    }
+
+    /**
+     * 根据图片路径，显示到具体的View上
+     * @param container 要把图片显示到的View
+     * @param uri 图片路径
+     * @param callBack 加载过程回调各种状态
+     */
+    public <T extends View> void display(T container, String uri, BitmapLoadCallBack<T> callBack) {
+        display(container, uri, null, callBack);
+    }
+
+    /**
+     * 根据图片路径，显示到具体的View上
+     * @param container 要把图片显示到的View
+     * @param uri 图片路径
+     * @param displayConfig 位图显示配置
+     * @param callBack
+     */
+    public <T extends View> void display(T container, String uri, BitmapDisplayConfig displayConfig, BitmapLoadCallBack<T> callBack) {
+        if (container == null) {
+            return;
+        }
+
+        if (callBack == null) {
+            callBack = new DefaultBitmapLoadCallBack<T>();
+        }
+
+        if (displayConfig == null || displayConfig == defaultDisplayConfig) {
+            displayConfig = defaultDisplayConfig.cloneNew();
+        }
+
+        // Optimize Max Size
+        BitmapSize size = displayConfig.getBitmapMaxSize();
+        displayConfig.setBitmapMaxSize(BitmapCommonUtils.optimizeMaxSizeByView(container, size.getWidth(), size.getHeight()));
+
+        container.clearAnimation();
+
+        if (TextUtils.isEmpty(uri)) {
+            callBack.onLoadFailed(container, uri, displayConfig.getLoadFailedDrawable());
+            return;
+        }
+
+        // start loading
+        callBack.onPreLoad(container, uri, displayConfig);
+
+        // find bitmap from mem cache.
+        Bitmap bitmap = globalConfig.getBitmapCache().getBitmapFromMemCache(uri, displayConfig);
+
+        if (bitmap != null) {
+            callBack.onLoadStarted(container, uri, displayConfig);
+            callBack.onLoadCompleted(
+                    container,
+                    uri,
+                    bitmap,
+                    displayConfig,
+                    BitmapLoadFrom.MEMORY_CACHE);
+        } else if (!bitmapLoadTaskExist(container, uri, callBack)) {
+
+            final BitmapLoadTask<T> loadTask = new BitmapLoadTask<T>(container, uri, displayConfig, callBack);
+
+            // get executor
+            PriorityExecutor executor = globalConfig.getBitmapLoadExecutor();
+            File diskCacheFile = this.getBitmapFileFromDiskCache(uri);
+            boolean diskCacheExist = diskCacheFile != null && diskCacheFile.exists();
+            if (diskCacheExist && executor.isBusy()) {
+                executor = globalConfig.getDiskCacheExecutor();
+            }
+            // set loading image
+            Drawable loadingDrawable = displayConfig.getLoadingDrawable();
+            callBack.setDrawable(container, new AsyncDrawable<T>(loadingDrawable, loadTask));
+
+            loadTask.setPriority(displayConfig.getPriority());
+            loadTask.executeOnExecutor(executor);
+        }
+    }
+
+    /////////////////////////////////////////////// cache  缓存相关/////////////////////////////////////////////////////////////////
+
+    /**
+     * 清除内存和磁盘缓存
+     */
+    public void clearCache() {
+        globalConfig.clearCache();
+    }
+
+    /**
+     * 清除内存缓存
+     */
+    public void clearMemoryCache() {
+        globalConfig.clearMemoryCache();
+    }
+
+    /**
+     * 清除磁盘缓存
+     */
+    public void clearDiskCache() {
+        globalConfig.clearDiskCache();
+    }
+
+    /**
+     * 根据uri清除内存缓存和磁盘缓存
+     * @param uri
+     */
+    public void clearCache(String uri) {
+        globalConfig.clearCache(uri);
+    }
+
+    /**
+     * 根据uri清除内存缓存
+     * @param uri
+     */
+    public void clearMemoryCache(String uri) {
+        globalConfig.clearMemoryCache(uri);
+    }
+
+    /**
+     * 根据uri清除磁盘缓存
+     * @param uri
+     */
+    public void clearDiskCache(String uri) {
+        globalConfig.clearDiskCache(uri);
+    }
+
+    /**
+     * 刷新缓存
+     */
+    public void flushCache() {
+        globalConfig.flushCache();
+    }
+
+    /**
+     * 关闭缓存
+     */
+    public void closeCache() {
+        globalConfig.closeCache();
+    }
+
+    /**
+     * 根据uri从磁盘缓存得到位图文件
+     * @param uri
+     * @return
+     */
+    public File getBitmapFileFromDiskCache(String uri) {
+        return globalConfig.getBitmapCache().getBitmapFileFromDiskCache(uri);
+    }
+
+    /**
+     * 根据uri和位图显示配置从磁盘缓存得到位图文件
+     * @param uri
+     * @param config
+     * @return
+     */
+    public Bitmap getBitmapFromMemCache(String uri, BitmapDisplayConfig config) {
+        if (config == null) {
+            config = defaultDisplayConfig;
+        }
+        return globalConfig.getBitmapCache().getBitmapFromMemCache(uri, config);
+    }
+
+    ////////////////////////////////////////// tasks  任务//////////////////////////////////////////////////////////////////////
+
+    /**
+     * 支持暂停
+     */
+    @Override
+    public boolean supportPause() {
+        return true;
+    }
+
+    /**
+     * 支持重新开始
+     */
+    @Override
+    public boolean supportResume() {
+        return true;
+    }
+
+    /**
+     * 支持取消
+     */
+    @Override
+    public boolean supportCancel() {
+        return true;
+    }
+
+    /**
+     * 暂停
+     */
+    @Override
+    public void pause() {
+        pauseTask = true;
+        flushCache();
+    }
+
+    /**
+     * 刷新
+     */
+    @Override
+    public void resume() {
+        pauseTask = false;
+        synchronized (pauseTaskLock) {
+            pauseTaskLock.notifyAll();
+        }
+    }
+
+    /**
+     * 取消
+     */
+    @Override
+    public void cancel() {
+        pauseTask = true;
+        cancelAllTask = true;
+        synchronized (pauseTaskLock) {
+            pauseTaskLock.notifyAll();
+        }
+    }
+
+    /**
+     * 是否暂停
+     */
+    @Override
+    public boolean isPaused() {
+        return pauseTask;
+    }
+
+    /**
+     * 是否是取消了
+     */
+    @Override
+    public boolean isCancelled() {
+        return cancelAllTask;
+    }
+
+    ////////////////////////////////////////////////下面这些方法是否没有提供给开发者使用的///////////////////////////////////////////////////////////////
+
+    @SuppressWarnings("unchecked")
+    private static <T extends View> BitmapLoadTask<T> getBitmapTaskFromContainer(T container, BitmapLoadCallBack<T> callBack) {
+        if (container != null) {
+            final Drawable drawable = callBack.getDrawable(container);
+            if (drawable instanceof AsyncDrawable) {
+                final AsyncDrawable<T> asyncDrawable = (AsyncDrawable<T>) drawable;
+                return asyncDrawable.getBitmapWorkerTask();
+            }
+        }
+        return null;
+    }
+
+    private static <T extends View> boolean bitmapLoadTaskExist(T container, String uri, BitmapLoadCallBack<T> callBack) {
+        final BitmapLoadTask<T> oldLoadTask = getBitmapTaskFromContainer(container, callBack);
+
+        if (oldLoadTask != null) {
+            final String oldUrl = oldLoadTask.uri;
+            if (TextUtils.isEmpty(oldUrl) || !oldUrl.equals(uri)) {
+                oldLoadTask.cancel(true);
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public class BitmapLoadTask<T extends View> extends PriorityAsyncTask<Object, Object, Bitmap> {
+        private final String uri;
+        private final WeakReference<T> containerReference;
+        private final BitmapLoadCallBack<T> callBack;
+        private final BitmapDisplayConfig displayConfig;
+
+        private BitmapLoadFrom from = BitmapLoadFrom.DISK_CACHE;
+
+        public BitmapLoadTask(T container, String uri, BitmapDisplayConfig config, BitmapLoadCallBack<T> callBack) {
+            if (container == null || uri == null || config == null || callBack == null) {
+                throw new IllegalArgumentException("args may not be null");
+            }
+
+            this.containerReference = new WeakReference<T>(container);
+            this.callBack = callBack;
+            this.uri = uri;
+            this.displayConfig = config;
+        }
+
+        @Override
+        protected Bitmap doInBackground(Object... params) {
+
+            synchronized (pauseTaskLock) {
+                while (pauseTask && !this.isCancelled()) {
+                    try {
+                        pauseTaskLock.wait();
+                        if (cancelAllTask) {
+                            return null;
+                        }
+                    } catch (Throwable e) {
+                    }
+                }
+            }
+
+            Bitmap bitmap = null;
+
+            // get cache from disk cache
+            if (!this.isCancelled() && this.getTargetContainer() != null) {
+                this.publishProgress(PROGRESS_LOAD_STARTED);
+                bitmap = globalConfig.getBitmapCache().getBitmapFromDiskCache(uri, displayConfig);
+            }
+
+            // download image
+            if (bitmap == null && !this.isCancelled() && this.getTargetContainer() != null) {
+                bitmap = globalConfig.getBitmapCache().downloadBitmap(uri, displayConfig, this);
+                from = BitmapLoadFrom.URI;
+            }
+
+            return bitmap;
+        }
+
+        public void updateProgress(long total, long current) {
+            this.publishProgress(PROGRESS_LOADING, total, current);
+        }
+
+        private static final int PROGRESS_LOAD_STARTED = 0;
+        private static final int PROGRESS_LOADING = 1;
+
+        @Override
+        protected void onProgressUpdate(Object... values) {
+            if (values == null || values.length == 0) return;
+
+            final T container = this.getTargetContainer();
+            if (container == null) return;
+
+            switch ((Integer) values[0]) {
+                case PROGRESS_LOAD_STARTED:
+                    callBack.onLoadStarted(container, uri, displayConfig);
+                    break;
+                case PROGRESS_LOADING:
+                    if (values.length != 3) return;
+                    callBack.onLoading(container, uri, displayConfig, (Long) values[1], (Long) values[2]);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            final T container = this.getTargetContainer();
+            if (container != null) {
+                if (bitmap != null) {
+                    callBack.onLoadCompleted(
+                            container,
+                            this.uri,
+                            bitmap,
+                            displayConfig,
+                            from);
+                } else {
+                    callBack.onLoadFailed(
+                            container,
+                            this.uri,
+                            displayConfig.getLoadFailedDrawable());
+                }
+            }
+        }
+
+        @Override
+        protected void onCancelled(Bitmap bitmap) {
+            synchronized (pauseTaskLock) {
+                pauseTaskLock.notifyAll();
+            }
+        }
+
+        public T getTargetContainer() {
+            final T container = containerReference.get();
+            final BitmapLoadTask<T> bitmapWorkerTask = getBitmapTaskFromContainer(container, callBack);
+
+            if (this == bitmapWorkerTask) {
+                return container;
+            }
+
+            return null;
+        }
+    }
+}
