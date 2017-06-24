@@ -1,0 +1,30 @@
+1.父ViewPager创建
+2.创建子ViewPager时复制ChildViewPager.java到项目中
+  布局中使用 
+	<ChildViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:background="#000000" >
+        </com.xnrtv.zsxn.view.ChildViewPager>
+ 制作幻灯需要点的可以复制CirclePageIndicator.java到项目中
+ 布局中使用
+	<CirclePageIndicator
+            android:id="@+id/indicator"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:paddingBottom="5dp" />
+fragment_main_one.xml 中有布局样式
+
+3.子ViewPager的单机监听器
+viewpager.setOnSingleTouchListener(new OnSingleTouchListener() {
+	@Override
+	public void onSingleTouch() {}});
+
+幻灯需要点：
+viewpager = (ChildViewPager) mFragmentView.findViewById(R.id.viewpager);
+mIndicator = (CirclePageIndicator) mFragmentView.findViewById(R.id.indicator);
+viewpager.setAdapter(adapter);
+mIndicator.setViewPager(viewpager);
+
