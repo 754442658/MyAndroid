@@ -1,0 +1,38 @@
+		//如果访问的页面中有 Javascript，则 webview 必须设置支持 Javascript ，否则显示空白页面。
+		webView.getSettings().setJavaScriptEnabled(true);
+
+		//如果点击页面中链接， 如果希望点击链接继续在当前 browser 中响应， 而不是新开 Android 的系统browser 中响应该链接，必须覆盖 webview 的 WebViewClient 对象。
+		webView.setWebViewClient(new WebViewClient() { // 通过webView打开链接，不调用系统浏览器
+
+			@Override
+			public boolean shouldOverrideUrlLoading(WebView view, String url) {
+
+				view.loadUrl(url);
+				return true;
+			}
+		});
+		//缩放级别  100是不变还是网页大小，100以下是缩放网页
+		webView.setInitialScale(25);
+		//下面两行双击放大、双击缩小
+		webView.getSettings().setUseWideViewPort(true);
+		webView.getSettings().setLoadWithOverviewMode(true);
+
+		//缩放开关 设置此属性，仅支持双击缩放，不支持触摸缩放
+		webView.getSettings().setSupportZoom(true);
+		// 设置是否可缩放 如果设置了此属性，那么webView.getSettings().setSupportZoom(true);也默认设置为true
+		webView.getSettings().setBuiltInZoomControls(true);
+
+		if (null != url) {
+			webView.loadUrl(url);
+		}
+
+
+		//如果不做任何处理，浏览网页，点击系统“Back”键，整个 Browser 会调用 finish()而结束自身，
+		//如果希望浏览的网 页回退而不是推出浏览器，需要在当前 Activity 中处理并消费 掉该 Back 事件。
+		public boolean onKeyDown(int keyCode, KeyEvent event){ 
+			if ((keyCode == KeyEvent.KEYCODE_BACK) && mWebView.canGoBack()) {
+				mWebView.goBack();
+				return true;
+			}
+			return super.onKeyDown(keyCode, event);
+		} 
