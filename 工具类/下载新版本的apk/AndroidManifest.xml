@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.tencentvod">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+
+    <application
+        android:name=".TApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/icon"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <!--版本更新所要用到的 fileProvider 用于兼容7.0通知栏的安装-->
+        <!--${applicationId}是获取当前项目的包名，前提是defaultConfig｛｝闭包中要有applicationId属性-->
+        <!--其中authorities可以自定义。为了避免和其它app冲突，最好带上自己app的包名。-->
+        <!--标签中的resource填写配置fileprovider的配置文件，在res资源目录下新建xml文件下，
+        在该文件夹下创建file_provider_paths.xml文件，这个xml文件名并不是一定要这么起，只要和清单文件中配置的文件名一致就行。-->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <!--元数据-->
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_path" />
+        </provider>      
+    </application>
+
+</manifest>

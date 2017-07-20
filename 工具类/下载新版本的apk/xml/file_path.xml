@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--内部的element可以是
+    files-path，             Context.getFilesDir()，
+    cache-path，             Context.getCacheDir()，
+    external-path，          Environment.getExternalStorageDirectory()，
+    external-files-path，    Context.getExternalFilesDir()，
+    external-cache-path，     Context.getExternalCacheDir()
+    等几个方法。    后来翻看源码发现还有一个没有写进文档的，但是也可以使用的element，是root-path，
+    直接对应文件系统根目录。不过既然没有写进文档中，其实还是有将来移除的可能的。
+    使用的话需要注意一下风险。-->
+
+    <!--name：一个引用字符串。-->
+    <!--path：文件夹“相对路径”，完整路径取决于当前的标签类型
+        如：在sdk路径下面新建了一个"Test1111111111"文件夹，文件夹下面有个"APK"文件夹用来存放更新下载好的apk
+        如果只是共享/访问这个文件夹的话，path设置如下
+        path="111111TestTIM/APK"
+
+    -->
+    <!--<paths>-->
+    <!--<external-path-->
+    <!--name="测试.apk"-->
+    <!--path="111111TestTIM/APK" />-->
+    <!--</paths>-->
+
+    <root-path
+        name="root_path"
+        path="." />
+</resources>

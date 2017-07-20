@@ -71,14 +71,23 @@ public class VersionUpdateUtil {
                 //0是notif这条通知的id
                 manager.notify(0, notif);
             } else if (msg.what == 2001) {
+               // 获取文件Uri 根据系统来区分，7.0一下和7.0以上
+                Uri uri = null;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    //判读版本是否在7.0以上
+                    uri = FileProvider.getUriForFile(context, context.getPackageName() + ".fileprovider", (File) msg.obj);
+                } else {
+                    // 版本在7.0一下
+                    uri = Uri.fromFile((File) msg.obj);
+                }
                 manager.cancel(0);
                 downFileSize = 0;
                 fileLength = 0;
                 // 安装下载好的apk文件
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.setDataAndType(Uri.fromFile((File) msg.obj),
-                        "application/vnd.android.package-archive");
+                intent.setDataAndType(uri, "application/vnd.android.package-archive");
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);//添加这一句表示对目标应用临时授权该Uri所代表的文件
                 // 这里的EcmobileApp.context是application的context
                 TApplication.context.startActivity(intent);
             }
@@ -191,7 +200,7 @@ public class VersionUpdateUtil {
                     packagePath.mkdirs();
                 }
                 try {
-                    apkPath = new File(packagePath + "/视秀直播.apk");
+                    apkPath = new File(packagePath + "/test.apk");
                     if (!apkPath.exists()) {
                         apkPath.createNewFile();
                     } else {
