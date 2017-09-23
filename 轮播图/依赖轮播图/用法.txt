@@ -1,0 +1,40 @@
+
+   RollPagerView vp;
+    ArrayList<BinnerData.binnerData> listVp = new ArrayList<>();
+    AdapterEliteVp adapterVp;
+
+
+
+      //设置播放时间间隔
+        vp.setPlayDelay(3000);
+        //设置透明度
+        vp.setAnimationDurtion(500);
+        adapterVp = new AdapterEliteVp(listVp);
+        //设置适配器
+        vp.setAdapter(adapterVp);
+
+
+
+        //设置指示器（顺序依次）
+        //自定义指示器图片
+        //设置圆点指示器颜色
+        //设置文字指示器
+        //隐藏指示器
+        vp.setHintView(new ImgHintView(getActivity(), R.mipmap.icon_binner_sel, R.mipmap.icon_binner_un));
+//        vp.setHintView(new IconHintView(getActivity(), R.drawable.circle_sel, R.drawable.circle_unsel));
+//        vp.setHintView(new ColorPointHintView(getActivity(), Color.YELLOW, Color.WHITE));
+        //mRollViewPager.setHintView(new TextHintView(this));
+        //mRollViewPager.setHintView(null);
+
+	// 设置点击事件
+        adapterVp.setOnItemClickLitener(new AdapterEliteVp.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                L.e("点击了第" + position + "个图片");
+            }
+
+            @Override
+            public void onItemLongClick(View view, int position) {
+
+            }
+        });

@@ -76,6 +76,8 @@ public class VersionUpdateUtil {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     //判读版本是否在7.0以上
                     uri = FileProvider.getUriForFile(context, context.getPackageName() + ".fileprovider", (File) msg.obj);
+					 //添加权限
+					intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);???
                 } else {
                     // 版本在7.0一下
                     uri = Uri.fromFile((File) msg.obj);

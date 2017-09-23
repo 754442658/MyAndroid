@@ -1,0 +1,2 @@
+布局届满的跟布局添加 android:fitsSystemWindows="true"属性
+只添加这个的话可以解决问题，但是整体界面会下移一个状态栏高度，解决办法，跟布局用MyLinearLayout布局

@@ -1,0 +1,6 @@
+
+// 第一个参数是上下文对象，第二个参数是默认的日期时间，可以传null或者""  当前的格式是  年月日 时分
+DateTimePickDialogUtil dateTimePickDialogUtil = new DateTimePickDialogUtil(this, "");
+// 传递一个接收显示选择好的日期的控件，可以使textView或者Edittext
+dateTimePickDialogUtil.dateTimePicKDialog(tvStartTime).show();
+

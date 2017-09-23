@@ -1,0 +1,8 @@
+<resources>
+    // 下拉出 上拉消失
+    <style name="pop" parent="@android:style/Animation">
+        <item name="android:windowEnterAnimation">@anim/push_down_in</item>
+        <item name="android:windowExitAnimation">@anim/push_up_out</item>
+    </style>
+
+</resources>

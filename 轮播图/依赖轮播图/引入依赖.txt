@@ -1,0 +1,1 @@
+compile 'com.jude:rollviewpager:1.2.9'

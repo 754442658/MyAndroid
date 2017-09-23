@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.autolayout.AutoRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.zhy.autolayout.AutoLinearLayout
+        android:id="@+id/pop_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#40000000"
+        android:orientation="vertical">
+    </com.zhy.autolayout.AutoLinearLayout>
+
+    <com.zhy.autolayout.AutoLinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30px"
+        android:layout_marginLeft="20px"
+        android:layout_marginRight="20px"
+        android:orientation="vertical">
+
+        <com.zhy.autolayout.AutoLinearLayout
+            android:id="@+id/linearlayout"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bac_camero"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <com.zhy.autolayout.AutoRelativeLayout
+                android:id="@+id/view_camero_rl_takephoto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/paizhaoTextview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:paddingBottom="20px"
+                    android:paddingTop="20px"
+                    android:text="拍照"
+                    android:textColor="#0077ff"
+                    android:textSize="20sp"/>
+            </com.zhy.autolayout.AutoRelativeLayout>
+
+            <View
+                android:id="@+id/fengexianImageView"
+                android:layout_width="fill_parent"
+                android:layout_height="2px"
+                android:background="#bdbdbd"/>
+
+            <com.zhy.autolayout.AutoRelativeLayout
+                android:id="@+id/view_camero_rl_selectphoto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/xiangceTextview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:paddingBottom="20px"
+                    android:paddingTop="20px"
+                    android:text="从手机相册选择"
+                    android:textColor="#0077ff"
+                    android:textSize="20sp"/>
+            </com.zhy.autolayout.AutoRelativeLayout>
+        </com.zhy.autolayout.AutoLinearLayout>
+
+        <com.zhy.autolayout.AutoLinearLayout
+            android:id="@+id/view_camero_ll_cancel"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20px"
+            android:background="@drawable/bac_camero"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/quxiaoTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="20px"
+                android:paddingTop="20px"
+                android:text="取消"
+                android:textColor="#0077ff"
+                android:textSize="20sp"/>
+        </com.zhy.autolayout.AutoLinearLayout>
+    </com.zhy.autolayout.AutoLinearLayout>
+
+</com.zhy.autolayout.AutoRelativeLayout>

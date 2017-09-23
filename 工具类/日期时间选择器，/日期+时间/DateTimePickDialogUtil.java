@@ -1,5 +1,6 @@
 
 
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -13,7 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.TimePicker;
 import android.widget.TimePicker.OnTimeChangedListener;
 
-import com.dingdang.user.R;
+import com.sxrecruit.R;
+
 
 public class DateTimePickDialogUtil implements OnDateChangedListener,
 		OnTimeChangedListener {
@@ -26,10 +28,10 @@ public class DateTimePickDialogUtil implements OnDateChangedListener,
 
 	/**
 	 * 日期时间构造器
-	 * 
-	 * @param ativity
+	 *
+	 * @param activity
 	 *            调用的父activty
-	 * @param initTime
+	 * @param initDateTime
 	 *            初始化的日期时间
 	 */
 	public DateTimePickDialogUtil(Activity activity, String initDateTime) {
@@ -58,7 +60,7 @@ public class DateTimePickDialogUtil implements OnDateChangedListener,
 
 	/**
 	 * 实现将初始日期时间2012年07月02日 16:45 拆分成年 月 日 时 分 秒,并赋值给calendar
-	 * 
+	 *
 	 * @param initDateTime
 	 *            初始日期时间值 字符串型
 	 * @return Calendar 返回日历对象
@@ -92,7 +94,7 @@ public class DateTimePickDialogUtil implements OnDateChangedListener,
 
 	/**
 	 * 截取子串
-	 * 
+	 *
 	 * @param srcStr
 	 *            源串
 	 * @param pattern
@@ -102,7 +104,7 @@ public class DateTimePickDialogUtil implements OnDateChangedListener,
 	 * @return
 	 */
 	public static String spliteString(String srcStr, String pattern,
-			String indexOrLast, String frontOrBack) {
+									  String indexOrLast, String frontOrBack) {
 		String result = "";
 		int loc = -1;
 		if (indexOrLast.equalsIgnoreCase("index")) {
@@ -122,7 +124,7 @@ public class DateTimePickDialogUtil implements OnDateChangedListener,
 
 	/**
 	 * 弹出日期时间选择框方法
-	 * 
+	 *
 	 * @param inputDate
 	 *            :为需要设置的日期时间文本编辑框
 	 * @return
@@ -160,6 +162,45 @@ public class DateTimePickDialogUtil implements OnDateChangedListener,
 		return ad;
 	}
 
+	    /**
+     * 弹出日期时间选择框方法
+     *
+     * @param inputDate :为需要设置的日期时间TextView
+     * @return
+     */
+    public AlertDialog dateTimePicKDialog(final TextView inputDate) {
+        LinearLayout dateTimeLayout = (LinearLayout) activity
+                .getLayoutInflater().inflate(R.layout.common_datetime, null);
+        datePicker = (DatePicker) dateTimeLayout.findViewById(R.id.datepicker);
+        timePicker = (TimePicker) dateTimeLayout.findViewById(R.id.timepicker);
+
+        datePicker
+                .setDescendantFocusability(DatePicker.FOCUS_BLOCK_DESCENDANTS);
+        timePicker
+                .setDescendantFocusability(TimePicker.FOCUS_BLOCK_DESCENDANTS);
+
+        init(datePicker, timePicker);
+        timePicker.setIs24HourView(true);
+        timePicker.setOnTimeChangedListener(this);
+
+        ad = new AlertDialog.Builder(activity)
+                .setTitle(initDateTime)
+                .setView(dateTimeLayout)
+                .setPositiveButton("设置", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        inputDate.setText(dateTime);
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        inputDate.setText("");
+                    }
+                }).show();
+
+        onDateChanged(null, 0, 0, 0);
+        return ad;
+    }
+
 	@Override
 	public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
 		Calendar calendar = Calendar.getInstance();
@@ -174,7 +215,7 @@ public class DateTimePickDialogUtil implements OnDateChangedListener,
 
 	@Override
 	public void onDateChanged(DatePicker view, int year, int monthOfYear,
-			int dayOfMonth) {
+							  int dayOfMonth) {
 		// 获得日历实例
 		Calendar calendar = Calendar.getInstance();
 

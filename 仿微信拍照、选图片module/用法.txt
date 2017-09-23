@@ -1,0 +1,141 @@
+github原文地址：https://github.com/lovetuzitong/MultiImageSelector 原文没有做拍照的7.0版本适配，现在这个做了适配
+
+当做module引入项目(引入成功后再build里面会有 compile project(':multi-image-selector'))
+
+
+点击按钮的时候调用如下三种方法
+
+1、第一个参数是activity或者fragment的this，第二个参数是请求码requestCode
+
+MultiImageSelector.create()
+        .start(Activity/Fragment, REQUEST_IMAGE_CODE);
+
+2、
+MultiImageSelector.create(Context)
+        .showCamera(boolean) // 是否显示相机. 默认为显示
+        .count(int) // 最大选择图片数量, 默认为9. 只有在选择模式为多选时有效
+        .single() // 单选模式
+        .multi() // 多选模式, 默认模式;
+        .origin(ArrayList<String>) // 默认已选择图片. 只有在选择模式为多选时有效 可不传递
+        .start(Activity/Fragment, REQUEST_IMAGE);
+3、
+Intent intent = new Intent(mContext, MultiImageSelectorActivity.class);
+// 是否显示调用相机拍照
+intent.putExtra(MultiImageSelectorActivity.EXTRA_SHOW_CAMERA, true);
+// 最大图片选择数量
+intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_COUNT, 9);
+// 设置模式 (支持 单选/MultiImageSelectorActivity.MODE_SINGLE 或者 多选/MultiImageSelectorActivity.MODE_MULTI)
+intent.putExtra(MultiImageSelectorActivity.EXTRA_SELECT_MODE, MultiImageSelectorActivity.MODE_MULTI);
+// 默认选择图片,回填选项(支持String ArrayList)
+intent.putStringArrayListExtra(MultiImageSelectorActivity.EXTRA_DEFAULT_SELECTED_LIST, defaultDataArray);
+startActivityForResult(intent, REQUEST_IMAGE);
+
+
+然后在接收的activity里面要重写onActivityResult方法，接收选中或者拍照的图片
+@Override
+protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    // REQUEST_IMAGE是上面传递的请求码
+    if(requestCode == REQUEST_IMAGE){
+        if(resultCode == RESULT_OK){
+            // 获取返回的图片列表
+            List<String> path = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
+            // 处理你自己的逻辑 ....
+        }
+    }
+}
+
+
+另外如果选择照片或者拍照后想要裁剪照片选择头像的话，可以在onActivityResult里面以及后面作如下操作
+
+ @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE) {
+            if (resultCode == RESULT_OK) {
+            // 这里是拍照或者选择照片成功后的回调，注意头像要是单选模式
+            File file = new File(mSelectPath.get(0));
+            Uri uri = null;
+            // 判断版本
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                startPhotoZoom(null, file);
+            } else {
+                uri = Uri.fromFile(file);
+                startPhotoZoom(uri, null);
+            }
+
+        } else if (requestCode == CUT_IMAGE) {
+            // 照片裁剪成功，做相应操作，照片存储的地址是下面的file1的地址
+        }
+    }
+
+
+
+    /**
+     * @param uri
+     */
+    public void startPhotoZoom(Uri uri, File file) {
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        // 判断版本
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            intent.setDataAndType(getImageContentUri(this, file), "image/*");
+        } else {
+            intent.setDataAndType(uri, "image/*");
+        }
+
+	// 这个file是裁剪照片以后图片的保存地址，可以自定义
+        File file1 = new File("/storage/emulated/0/DCIM/000.jpg");
+        if (file1.exists()) {
+            file1.delete();
+        }
+        try {
+            file1.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // 下面这个crop=true是设置在开启的Intent中设置显示的VIEW可裁剪
+        intent.putExtra("crop", "true");
+        // aspectX aspectY 是宽高的比例
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        // outputX outputY 是裁剪图片宽高
+        intent.putExtra("outputX", 250);
+        intent.putExtra("outputY", 250);
+        intent.putExtra("return-data", true);
+        //TODO 输入预裁剪图片的Uri，指定以后，可以通过这个Uri获得图片
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file1));
+        startActivityForResult(intent, CUT_IMAGE);
+    }
+
+    /**
+     * android 7.0裁剪照片
+     *
+     * @param context
+     * @param imageFile
+     * @return
+     */
+    public static Uri getImageContentUri(Context context, File imageFile) {
+        String filePath = imageFile.getAbsolutePath();
+        Cursor cursor = context.getContentResolver().query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                new String[]{MediaStore.Images.Media._ID},
+                MediaStore.Images.Media.DATA + "=? ",
+                new String[]{filePath}, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            int id = cursor.getInt(cursor
+                    .getColumnIndex(MediaStore.MediaColumns._ID));
+            Uri baseUri = Uri.parse("content://media/external/images/media");
+            return Uri.withAppendedPath(baseUri, "" + id);
+        } else {
+            if (imageFile.exists()) {
+                ContentValues values = new ContentValues();
+                values.put(MediaStore.Images.Media.DATA, filePath);
+                return context.getContentResolver().insert(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+            } else {
+                return null;
+            }
+        }
+    }

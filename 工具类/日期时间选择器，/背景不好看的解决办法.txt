@@ -1,8 +1,2 @@
-在style里面添加appTheme
 
-<style name="AppTheme" parent="AppBaseTheme">
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-    </style>
-
-
-在application的theme里或者用到日期选择器的avtivity的theme里面引用一下
+在application的theme里或者用到日期选择器的avtivity的theme里面引用一下	android:theme="@android:style/Theme.Holo.Light.NoActionBar"

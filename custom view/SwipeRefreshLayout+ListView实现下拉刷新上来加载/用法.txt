@@ -1,0 +1,97 @@
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/srl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <ListView
+            android:id="@+id/lv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/rl1"
+            android:divider="#00000000"
+            android:dividerHeight="13px" />
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    activity实现SwipeRefreshLayout.OnRefreshListener 接口
+
+    srl.setOnRefreshListener(this);
+        srl.setColorSchemeColors(getResources().getColor(android.R.color.holo_blue_bright)
+                , getResources().getColor(android.R.color.holo_green_light)
+                , getResources().getColor(android.R.color.holo_orange_light)
+                , getResources().getColor(android.R.color.holo_red_light));
+
+
+/**
+         * 判断listview是否滑动到底部
+         */
+        lv.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+                // scrollState 分 SCROLL_STATE_TOUCH_SCROLL 和 SCROLL_STATE_IDLE，为正在滑动和停止滑动后。
+                switch (scrollState) {
+                    case SCROLL_STATE_IDLE:
+                        if (isShowBottom(lv)) {
+                            // 滑动到底部
+                            if (hasMore){
+			    // 联网获取数据
+                                getData();
+				}
+                        }
+                        break;
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int i, int visibleItemCount, int totalItemCount) {
+                if (totalItemCount > visibleItemCount) {
+                    //有更多
+                    hasMore = true;
+                } else {
+                    //不满一屏
+                    hasMore = false;
+                }
+            }
+        });
+
+
+	  /**
+     * 判断ListView是否显示了最后一条数据
+     *
+     * @param listView
+     * @return
+     */
+    public static boolean isShowBottom(final AbsListView listView) {
+        final Adapter adapter = listView.getAdapter();
+
+        if (null == adapter || adapter.isEmpty()) {
+            return true;
+        }
+
+        final int lastItemPosition = adapter.getCount() - 1;
+        final int lastVisiblePosition = listView.getLastVisiblePosition();
+
+        /**
+         * This check should really just be: lastVisiblePosition == lastItemPosition, but ListView
+         * internally uses a FooterView which messes the positions up. For me we'll just subtract
+         * one to account for it and rely on the inner condition which checks getBottom().
+         */
+        if (lastVisiblePosition >= lastItemPosition - 1) {
+            final int childIndex = lastVisiblePosition - listView.getFirstVisiblePosition();
+            final int childCount = listView.getChildCount();
+            final int index = Math.min(childIndex, childCount - 1);
+            final View lastVisibleChild = listView.getChildAt(index);
+            if (lastVisibleChild != null) {
+                return lastVisibleChild.getBottom() <= listView.getBottom();
+            }
+        }
+
+        return false;
+
+//        boolean result = false;
+//        if (lv.getLastVisiblePosition() == (lv.getCount() - 1)) {
+//            final View bottomChildView = lv.getChildAt(lv.getLastVisiblePosition() - lv.getFirstVisiblePosition());
+//            result = (lv.getHeight() >= bottomChildView.getBottom());
+//        }
+//        return result;
+    }

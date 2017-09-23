@@ -1,0 +1,74 @@
+
+/**
+ * 认证界面选择上传照片
+ */
+public class AuthTakePhotoActivity extends PicaActivity implements BaseFunction {
+
+
+    ImageView imgPhoto;
+   
+
+    // SD卡读写权限
+    public String[] permission = {
+            Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA,
+            Manifest.permission.INTERNET,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+    String picUrl;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_auth_take_photo);
+        try {
+            initView();
+            addListener();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void initView() {
+           callBack = new CallBack() {
+            @Override
+            public void hasPermission(boolean hasPermission) {
+                if (hasPermission) {
+                    // 显示窗口
+                    pop.showAtLocation(findViewById(R.id.llSearch),
+                            Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0); // 设置layout在PopupWindow中显示的位置
+                }
+            }
+        };
+
+     
+    }
+
+    @Override
+    public void addListener() {
+       
+    }
+
+    @OnClick({R.id.llTakePhoto, R.id.llTemp, R.id.btDone})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.llTakePhoto:
+                // 上传图片
+                if (pop == null) {
+                    pop = new PopSelectPhoto(this, itemClickLitener);
+                }
+		// 下面这两个是检测权限的
+                request_code = 121;
+                getPermission(permission, request_code);
+                break;
+        }
+    }
+
+
+
+    @Override
+    public void selectPic(File photo) {
+        // photo 使用户选择的图片
+    }
+}

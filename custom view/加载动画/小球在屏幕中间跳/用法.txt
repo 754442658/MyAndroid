@@ -1,0 +1,33 @@
+repositories {
+    maven {
+        url "https://jitpack.io"
+    }
+}
+
+dependencies {
+	        compile 'com.github.zzz40500:android-shapeLoadingView:1.0.3.2'
+	}
+
+
+	<com.mingle.widget.LoadingView
+        android:id="@+id/loadView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
+
+
+dialog形式的
+
+ private ShapeLoadingDialog shapeLoadingDialog;
+
+  shapeLoadingDialog = new ShapeLoadingDialog.Builder(this)
+                .loadText("加载中...")
+                .build();
+
+
+        findViewById(R.id.button1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                shapeLoadingDialog.show();
+            }
+        });

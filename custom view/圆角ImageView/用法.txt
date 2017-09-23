@@ -1,4 +1,4 @@
-<headview.myapplication.RoundImageView
+	<headview.myapplication.RoundImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -25,5 +25,7 @@
 
 
 
+	round Ô²½Ç£¬cirleÔ²ÐÎ/ÕýÔ²
 	img.setType(RoundImageView.TYPE_ROUND);
+	Ô²½Ç½Ç¶È
 	img.setBorderRadius(90);

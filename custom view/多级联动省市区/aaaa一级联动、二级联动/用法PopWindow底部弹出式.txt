@@ -1,0 +1,32 @@
+ // 一级菜单
+ if (pw1 == null) {
+                    pw1 = new PopWheel1(this, AppData.genderArr, "选择性别", 5, new PopWheel1.CallBack() {
+                        @Override
+                        public void onResult(String arg1, int position) {
+                            gender = AppData.gender.get(position).getValue();
+                            tvGender.setText(arg1);
+                            L.e(position + "");
+                        }
+                    });
+                }
+                // 显示窗口
+                pw1.showAtLocation(findViewById(R.id.ll),
+                        Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0); // 设置layout在PopupWindow中显示的位置
+ 
+ 
+ 
+ 
+ 
+ // 二级菜单
+ if (pw2 == null) {
+                    pw2 = new PopWheel2(this, AppData.yearArr, AppData.mapMonth, "选择生日", 5, 0, new PopWheel2.CallBack() {
+                        @Override
+                        public void onResult(String arg1) {
+                            birthday = arg1;
+                            tvBirthday.setText(birthday);
+                        }
+                    });
+                }
+                // 显示窗口
+                pw2.showAtLocation(findViewById(R.id.ll),
+                        Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0); // 设置layout在PopupWindow中显示的位置
