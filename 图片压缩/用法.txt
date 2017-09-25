@@ -1,0 +1,109 @@
+
+Bitmap bitmap = null;
+bitmap = getThumbUploadPath(listSelPPT.get(0), 720);
+
+// 修复图片被旋转的角度
+Bitmap bitmap1 = PhotoBitmapUtils.rotaingImageView(angle, bitmap);
+// 压缩后的图片存到指定位置
+String picPath = PhotoBitmapUtils.savePhotoToSD(bitmap1, context);
+pic = new File(picPath);
+L.e("压缩后的图片大小 = " + contBuffer(pic));
+
+
+
+    /**
+     * 压缩图片
+     *
+     * @param oldPath        图片地址
+     * @param bitmapMaxWidth 最大宽度
+     * @return
+     */
+    private Bitmap getThumbUploadPath(String oldPath, int bitmapMaxWidth) {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(oldPath, options);
+        int height = options.outHeight;
+        int width = options.outWidth;
+        int reqHeight = 0;
+        int reqWidth = bitmapMaxWidth;
+        reqHeight = (reqWidth * height) / width;
+        // 在内存中创建bitmap对象，这个对象按照缩放大小创建的
+        options.inSampleSize = calculateInSampleSize(options, bitmapMaxWidth, reqHeight);
+//                System.out.println("calculateInSampleSize(options, 480, 800);==="
+//                                + calculateInSampleSize(options, 480, 800));
+        options.inJustDecodeBounds = false;
+        Bitmap bitmap = BitmapFactory.decodeFile(oldPath, options);
+        //Log.e("asdasdas", "reqWidth->"+reqWidth+"---reqHeight->"+reqHeight);
+        Bitmap bbb = compressImage(Bitmap.createScaledBitmap(bitmap, bitmapMaxWidth, reqHeight, false));
+        return bbb;
+    }
+
+    private int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            if (width > height) {
+                inSampleSize = Math.round((float) height / (float) reqHeight);
+            } else {
+                inSampleSize = Math.round((float) width / (float) reqWidth);
+            }
+        }
+        return inSampleSize;
+    }
+
+    private Bitmap compressImage(Bitmap image) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 80, baos);// 质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
+        int options = 100;
+        while (baos.toByteArray().length / 1024 > 400) { // 循环判断如果压缩后图片是否大于400kb,大于继续压缩
+            options -= 10;// 每次都减少10
+            baos.reset();// 重置baos即清空baos
+            image.compress(Bitmap.CompressFormat.JPEG, options, baos);// 这里压缩options%，把压缩后的数据存放到baos中
+        }
+        ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());// 把压缩后的数据baos存放到ByteArrayInputStream中
+        Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);// 把ByteArrayInputStream数据生成图片
+        return bitmap;
+    }
+
+
+
+
+
+    /**
+     * @param file 传入文件夹路径的对象
+     * @return 返回文件夹大小
+     */
+    public static double contBuffer(File file) {
+        if (file != null) {
+            if (file.exists()) {
+                // 如果是目录则递归计算其内容的总大小
+                if (file.isDirectory()) {
+                    File[] children = file.listFiles();
+                    double size = 0;
+                    for (File f : children) {
+                        size += contBuffer(f);
+                    }
+                    return (int) size;
+                } else {
+                    // 如果是文件则直接返回其大小,以“KB”为单位
+                    double size = (double) file.length();
+
+                    double kiloByte = size / 1024;
+                    if (kiloByte < 1) {
+                        return 1;
+                    }
+
+//                    double megaByte = kiloByte / 1024;
+//                    if (megaByte < 1) {
+//                        return 1;
+//                    }
+                    BigDecimal result2 = new BigDecimal(Double.toString(kiloByte));
+                    return result2.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                }
+            }
+        }
+        return 0;
+    }
