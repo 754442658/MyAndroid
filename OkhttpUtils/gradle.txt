@@ -1,0 +1,7 @@
+//必须使用
+    compile 'com.lzy.net:okgo:3.0.4'
+    //下载上传、下载代码
+    compile 'com.lzy.net:okserver:2.0.5'
+    // 下面两个是Okhttp的addInterceptor(new ChuckInterceptor(this)); 显示通知库
+    debugCompile 'com.readystatesoftware.chuck:library:1.0.3'
+    releaseCompile 'com.readystatesoftware.chuck:library-no-op:1.0.3'
