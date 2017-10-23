@@ -1,0 +1,31 @@
+	<headview.myapplication.RoundImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:src="@mipmap/test_image">
+        </headview.myapplication.RoundImageView>
+
+        <headview.myapplication.RoundImageView
+            android:id="@+id/id_meinv"
+            android:layout_width="wrap_content"
+            android:layout_height="150dp"
+            android:src="@mipmap/test_image"
+            zhy:borderRadius="6dp"
+            zhy:type="round">
+        </headview.myapplication.RoundImageView>
+
+        <headview.myapplication.RoundImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:src="@mipmap/test_image"
+            zhy:borderRadius="40dp"
+            zhy:type="round">
+        </headview.myapplication.RoundImageView>
+
+
+
+	round Ô²½Ç£¬cirleÔ²ÐÎ/ÕýÔ²
+	img.setType(RoundImageView.TYPE_ROUND);
+	Ô²½Ç½Ç¶È
+	img.setBorderRadius(90);

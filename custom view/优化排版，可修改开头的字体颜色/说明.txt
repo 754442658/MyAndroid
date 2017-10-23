@@ -1,4 +1,0 @@
-1、和普通textview用法一样，但是有几个属性不能用，paddingTop、paddingBottom，加上这两个属性都会在底部空出位置
-2、mTextView.setNameCount(int count)，方法可以设置前count个字改变颜色
-3、mTextView.setNameCoolr(int color)，方法可以设置要改变的文字的颜色
-4、注上面两个方法在setText之前调用

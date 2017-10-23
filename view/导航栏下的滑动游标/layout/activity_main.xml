@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="shishow.testactionbar.MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@mipmap/titlebg"
+        android:orientation="horizontal"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp">
+
+        <TextView
+            android:id="@+id/activity_main_home"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#70ff0000"
+            android:gravity="center"
+            android:text="Home"/>
+
+        <TextView
+            android:id="@+id/activity_main_train"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#7000ff00"
+            android:gravity="center"
+            android:text="Train"/>
+
+        <TextView
+            android:id="@+id/activity_main_vote"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#700000ff"
+            android:gravity="center"
+            android:text="Vote"/>
+
+        <TextView
+            android:id="@+id/activity_main_infrom"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#7000ffff"
+            android:gravity="center"
+            android:text="Infrom"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
+        android:background="#0090da">
+
+        <ImageView
+            android:id="@+id/cursor"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:scaleType="matrix"
+            android:src="@mipmap/icon_bar"/>
+    </LinearLayout>
+</LinearLayout>

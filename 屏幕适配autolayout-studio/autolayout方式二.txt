@@ -1,8 +1,0 @@
-compile 'com.zhy:autolayout:1.4.3'
-
-
-在app下的build.gradle里面添加如下即可
-
-dependencies {
-    compile 'com.zhy:autolayout:1.4.3'
-}

@@ -1,9 +1,0 @@
-在需要调用的地方调用如下代码
-Context 上下文对象
-View 可以是任意一个控件
-String 是要显示的文本，显示时间为两秒
-
-MyToast.showShort(Context context, View view, String msg);
-
-MyToast.showLong(Context context, View view, String msg);
-
