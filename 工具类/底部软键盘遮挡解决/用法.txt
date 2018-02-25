@@ -1,0 +1,5 @@
+注意事项：
+使用这个方法有个限制是布局内得包含有大小可调的布局如ListView,ScrollView等，并且最大高度(使用权重weight)至少得大于软键盘和输入框的高度之和。一般的聊天界面本身就是个ListView，所有不用担心这个问题。
+
+使用方法
+在你的Activity的oncreate()方法里调用AndroidBug5497Workaround.assistActivity(this);即可。注意：在setContentView(R.layout.xxx)之后调用。

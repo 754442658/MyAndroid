@@ -1,0 +1,32 @@
+1，访问http://maxcamillo.github.io/android-keystore-password-recover/howto.html，可以查看详细的说明，以及需要下载一个jar包， 已经上传到csdn上面了（一个积分希望大家不要喷，望理解）http://download.csdn.net/detail/wwq006/9563654 
+2、运行环境：java7 ，可以通过cmd->java -version查看 
+3、接下来就是找密码： 
+1.指定一个目录，比如：d:\password ; 
+2.将所有的文件放到这个目录下面： 
+1）你的签名文件； 
+2）下载的AndroidKeystoreBrute_v1.05.jar包； 
+3）在这个目录下新建个txt文件，比如password.txt,然后在这文件中依次写上你所怀疑的密码的关键字，每写完一个换行，保存。 
+4）之后就是打开cmd，执行：d:->cd password到我们之前指定的那个目录下面，执行如下命令： 
+java -jar AndroidKeystoreBrute_v1.05.jar -m 3 -k “你的签名文件路径” -d “之前新建的那个密码list文件路径（password.txt）” 
+例子：java -jar AndroidKeystoreBrute_v1.05.jar -m 3 -k “C:\mykeystore.keystore” -d “wordlist.txt” 
+如果你怀疑的密码list中确实含有密码关键字，则瞬间找到，得到信息如下： 
+Number of keys in keystore: 1 
+Found alias: myalias 
+Creation Date: Wed Apr 13 11:28:11 CST 2016 
+Start smart wordlist attack on key!! 
+Capitalize first letter 
+Current Pass: a || est. 0 Pass/Sec 
+**Got Password in 0 seconds 
+Password is: mypassword for alias myalias**
+
+ For updates visit http://code.google.com/p/android-keystore-password-recover/
+
+    看到Got Password in 0  seconds ,Password is:
+    就说明你已经破解了自己的签名文件，恭喜你！
+1
+2
+3
+4
+5
+最后通过执行：keytool -list -keystore “你的签名文件” 
+输入密码，就可以查看到你的SHA1秘钥了。
