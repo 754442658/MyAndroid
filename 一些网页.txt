@@ -2,3 +2,12 @@ andorid ios 测试阶段app生成下载二维码地址：   http://www.firhq.com/
 bug提交查看地址：	https://www.bugdone.cn/login
 json解析地址：		http://tool.oschina.net/codeformat/json
 项目管理地址：		https://trello.com/
+
+H5图标网站：
+http://www.iconfont.cn/home/index?spm=a313x.7781069.1998910419.2
+http://fontawesome.dashgame.com/
+
+MDUI开发设计规范
+https://www.mdui.org/
+
+梯子：https://github.com/Alvin9999/new-pac/wiki/ss%E5%85%8D%E8%B4%B9%E8%B4%A6%E5%8F%B7
