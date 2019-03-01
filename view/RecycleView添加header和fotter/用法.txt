@@ -1,0 +1,6 @@
+1、依然使用AdapterTest
+2、创建 BaseAdapter baseAdapter = new BaseRvAdapter(adapter); 穿入上面的AdapterTest对象
+3、添加HeaderView	TextView t2 = new TextView(getContext());
+			t2.setText("header2");
+			baseAdapter.addHeaderView(t2);
+4、设置adapter rv.setAdapter(baseAdapter);
