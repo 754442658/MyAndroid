@@ -1,3 +1,21 @@
+buildTypes {
+        debug {         
+            minifyEnabled false // 混淆  
+            zipAlignEnabled true // Zipalign优化 
+            shrinkResources true // 移除无用的resource文件    
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'  // 加载默认混淆配置文件  
+            signingConfig signingConfigs.debug // 签名
+        }
+        release {                      
+            minifyEnabled true // 混淆            
+            zipAlignEnabled true // Zipalign优化          
+            shrinkResources true  // 移除无用的resource文件           
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'  // 加载默认混淆配置文件
+            signingConfig signingConfigs.relealse  // 签名
+        }
+    }
+
+
 -ignorewarnings
 
 # 指定代码的压缩级别
@@ -117,4 +135,453 @@ public <methods>;
 
 public static final int *;
 
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 设置混淆的压缩比率 0 ~ 7
+#-optimizationpasses 5
+## 混淆时不使用大小写混合，混淆后的类名为小写
+#-dontusemixedcaseclassnames
+## 指定不去忽略非公共库的类
+#-dontskipnonpubliclibraryclasses
+## 指定不去忽略非公共库的成员
+#-dontskipnonpubliclibraryclassmembers
+## 混淆时不做预校验
+#-dontpreverify
+## 混淆时不记录日志
+#-verbose
+## 忽略警告
+#-ignorewarning
+## 代码优化
+#-dontshrink
+## 不优化输入的类文件
+#-dontoptimize
+## 保留注解不混淆
+#-keepattributes *Annotation*,InnerClasses
+## 避免混淆泛型
+#-keepattributes Signature
+## 保留代码行号，方便异常信息的追踪
+#-keepattributes SourceFile,LineNumberTable
+## 混淆采用的算法
+#-optimizations !code/simplification/cast,!field/*,!class/merging/*
+#
+## dump.txt文件列出apk包内所有class的内部结构
+#-dump class_files.txt
+## seeds.txt文件列出未混淆的类和成员
+#-printseeds seeds.txt
+## usage.txt文件列出从apk中删除的代码
+#-printusage unused.txt
+## mapping.txt文件列出混淆前后的映射
+#-printmapping mapping.txt
+
+## ------------------------------------- 混淆基础配置 ---------------------------------------------
+-optimizationpasses 5                               # 指定代码的压缩级别
+-dontusemixedcaseclassnames                         # 混淆时不会产生形形色色的类名\不使用大小写混合
+-dontskipnonpubliclibraryclasses                    # 指定不去忽略非公共的库类
+-dontskipnonpubliclibraryclassmembers               # 指定不去忽略包可见的库类的成员
+-dontpreverify                                      # 不预校验
+-ignorewarnings                                     # 屏蔽警告
+-verbose                                            # 混淆时记录日志
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*    #优化
+-keepattributes *Annotation*                        # 保护代码中的Annotation不被混淆
+-keepattributes Signature                           # 避免混淆泛型, 这在JSON实体映射时非常重要
+-keepattributes SourceFile,LineNumberTable          # 抛出异常时保留代码行号
+
+# 不需要混淆android-support-v4.jar
+-dontwarn android.support.v4.**
+-keep class android.support.v4.** { *; }
+-keep interface android.support.v4.app.** { *; }
+-keep public class * extends android.support.v4.**
+-keep public class * extends android.app.Fragment
+# 不需要混淆 v7包
+-dontwarn android.support.v7.**
+-keep class android.support.v7.internal.** { *; }
+-keep interface android.support.v7.internal.** { *; }
+-keep class android.support.v7.** { *; }
+# 不需要混淆 support design
+-dontwarn android.support.design.**
+-keep class android.support.design.** { *; }
+-keep interface android.support.design.** { *; }
+-keep public class android.support.design.R$* { *; }
+## 避免资源混淆
+-keep class **.R$*{*;}
+
+#避免混淆自定义控件类的 get/set 方法和构造函数
+-keep public class * extends android.view.View{
+    *** get*();
+    void set*(***);
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+}
+
+#-------------------------------  额外增加的 -----------------------------------------------------
+# 保留了继承自Activity、Application这些类的子类
+# 因为这些子类有可能被外部调用
+# 比如第一行就保证了所有Activity的子类不要被混淆
+-keep public class * extends android.app.Activity
+-keep public class * extends android.app.Application
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep public class * extends android.content.ContentProvider
+-keep public class * extends android.support.annotation.**
+-keep public class * extends android.app.backup.BackupAgentHelper
+-keep public class * extends android.preference.Preference
+-keep public class com.android.vending.licensing.ILicensingService
+-keep class android.support.** {*;}
+-keep public class * extends android.view.View
+
+# 保留所有的本地native方法不被混淆
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+-keepclasseswithmembernames class * {
+    public <init>(android.content.Context, android.util.AttributeSet);
+}
+
+-keepclasseswithmembernames class * {
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+}
+
+# 关闭log
+-assumenosideeffects class android.util.Log {
+    public static boolean isLoggable(java.lang.String, int);
+    public static int v(...);
+    public static int i(...);
+    public static int w(...);
+    public static int d(...);
+    public static int e(...);
+}
+
+# 避免layout中onclick方法（android:onclick="onClick"）混淆
+# 避免回调函数 onXXEvent 混淆
+-keepclassmembers class * {
+    void *(android.view.View);
+        *** *Click*(...);
+        *** *Event(...);
+}
+
+# 避免Serializable接口的子类中指定的某些成员变量和方法混淆
+-keepclassmembers class * implements java.io.Serializable {
+    static final long serialVersionUID;
+    private static final java.io.ObjectStreamField[] serialPersistentFields;
+    !static !transient <fields>;
+    private void writeObject(java.io.ObjectOutputStream);
+    private void readObject(java.io.ObjectInputStream);
+    java.lang.Object writeReplace();
+    java.lang.Object readResolve();
+}
+
+# ------------------------------------- 不需要混淆的系统组件和本地实体类 ----------------------------
+# 不混淆bean，** 换成具体的类名则表示不混淆某个具体的类
+#-dontwarn com.anhuanjia.news.common.bean.**
+#-keep class com.anhuanjia.news.common.bean.** { *; }
+
+# greenDao的实体类  E:\studioSpase\AnHuanJia\app\src\main\java\com\greenDao\daoEntity
+#-dontwarn com.anhuanjia.news.common.greenDao.daoEntity.**
+#-keep class com.anhuanjia.news.common.greenDao.daoEntity.** { *; }
+
+# ------------------------------- 保护指定的类和类的成员，但条件是所有指定的类和类成员是要存在------------
+-keepclasseswithmembers class * {
+    protected void init(android.content.Context, android.util.AttributeSet);
+    protected abstract void init(android.content.Context, android.util.AttributeSet);
+}
+# 避免混淆枚举类
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+    public String getValue();
+}
+# ------------------------------------- 不需要混淆的第三方类库 -------------------------------------
+# Alipay过滤出去(来源于Alipay官网)
+-keep class com.alipay.android.app.IAlixPay{*;}
+-keep class com.alipay.android.app.IAlixPay$Stub{*;}
+-keep class com.alipay.android.app.IRemoteServiceCallback{*;}
+-keep class com.alipay.android.app.IRemoteServiceCallback$Stub{*;}
+-keep class com.alipay.sdk.app.PayTask{public *;}
+-keep class com.alipay.sdk.app.AuthTask{public *;}
+
+# 微信过滤出去
+-dontwarn com.tencent.**
+-keep class com.tencent.** { *; }
+
+
+# Glide
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep public enum com.bumptech.glide.load.resource.bitmap.ImageHeaderParser$** {
+    **[] $VALUES;
+    public *;
+}
+
+#---------------------------------okgo、okrx、okserver---------------------------------
+#okhttp
+-dontwarn okhttp3.**
+-keep class okhttp3.**{*;}
+#okio
+-dontwarn okio.**
+-keep class okio.**{*;}
+
+#okgo
+-dontwarn com.lzy.okgo.**
+-keep class com.lzy.okgo.**{*;}
+
+#okrx
+-dontwarn com.lzy.okrx.**
+-keep class com.lzy.okrx.**{*;}
+
+#okrx2
+-dontwarn com.lzy.okrx2.**
+-keep class com.lzy.okrx2.**{*;}
+
+#okserver
+-dontwarn com.lzy.okserver.**
+-keep class com.lzy.okserver.**{*;}
+#---------------------------------okgo、okrx、okserver---------------------------------
+
+##--------------- Gson  ----------
+-keepattributes Signature
+# For using GSON @Expose annotation
+-keepattributes *Annotation*
+# Gson specific classes
+-keep class sun.misc.Unsafe { *; }
+#-keep class com.google.gson.stream.** { *; }
+##--------------- Gson  ----------
+
+# autolayout 的混淆代码
+-keep class com.zhy.autolayout.** {*;}
+
+# butterknife
+-keep class butterknife.** { *; }
+-dontwarn butterknife.internal.**
+-keep class **$$ViewBinder { *; }
+-keepclasseswithmembernames class * {
+   @butterknife.* <fields>;
+}
+-keepclasseswithmembernames class * {
+   @butterknife.* <methods>;
+}
+
+# Android EventBus
+-keepclassmembers class ** {
+    @org.greenrobot.eventbus.Subscribe <methods>;
+}
+-keep enum org.greenrobot.eventbus.ThreadMode { *; }
+# Only required if you use AsyncExecutor
+-keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
+    <init>(java.lang.Throwable);
+}
+
+# stetho 的混淆代码
+-keep class com.facebook.stetho.** {*;}
+
+ # SmartRefreshLayout 不用添加混淆
+
+# banner 的混淆代码
+-keep class com.youth.banner.** {*;}
+
+# 腾讯bug收集混淆
+-dontwarn com.tencent.bugly.**
+-keep public class com.tencent.bugly.**{*;}
+
+#greendao3.2.0,此是针对3.2.0，如果是之前的，可能需要更换下包名
+-keep class org.greenrobot.greendao.**{*;}
+-keepclassmembers class * extends org.greenrobot.greendao.AbstractDao {
+public static java.lang.String TABLENAME;
+}
+-keep class **$Properties
+
+# 友盟混淆
+-keep class com.umeng.commonsdk.** {*;}
+
+-keepclassmembers class * {
+   public <init> (org.json.JSONObject);
+}
+
+    -dontshrink
+    -dontoptimize
+    -dontwarn com.google.android.maps.**
+    -dontwarn android.webkit.WebView
+    -dontwarn com.umeng.**
+    -dontwarn com.tencent.weibo.sdk.**
+    -dontwarn com.facebook.**
+    -keep public class javax.**
+    -keep public class android.webkit.**
+    -dontwarn android.support.v4.**
+    -keep enum com.facebook.**
+    -keepattributes Exceptions,InnerClasses,Signature
+    -keepattributes *Annotation*
+    -keepattributes SourceFile,LineNumberTable
+
+    -keep public interface com.facebook.**
+    -keep public interface com.tencent.**
+    -keep public interface com.umeng.socialize.**
+    -keep public interface com.umeng.socialize.sensor.**
+    -keep public interface com.umeng.scrshot.**
+    -keep class com.android.dingtalk.share.ddsharemodule.** { *; }
+    -keep public class com.umeng.socialize.* {*;}
+
+    -keep class com.facebook.**
+    -keep class com.facebook.** { *; }
+    -keep class com.umeng.scrshot.**
+    -keep public class com.tencent.** {*;}
+    -keep class com.umeng.socialize.sensor.**
+    -keep class com.umeng.socialize.handler.**
+    -keep class com.umeng.socialize.handler.*
+    -keep class com.umeng.weixin.handler.**
+    -keep class com.umeng.weixin.handler.*
+    -keep class com.umeng.qq.handler.**
+    -keep class com.umeng.qq.handler.*
+    -keep class UMMoreHandler{*;}
+    -keep class com.tencent.mm.sdk.modelmsg.WXMediaMessage {*;}
+    -keep class com.tencent.mm.sdk.modelmsg.** implements   com.tencent.mm.sdk.modelmsg.WXMediaMessage$IMediaObject {*;}
+    -keep class im.yixin.sdk.api.YXMessage {*;}
+    -keep class im.yixin.sdk.api.** implements im.yixin.sdk.api.YXMessage$YXMessageData{*;}
+    -keep class com.tencent.mm.sdk.** {
+     *;
+    }
+    -keep class com.tencent.mm.opensdk.** {
+   *;
+    }
+    -dontwarn twitter4j.**
+    -keep class twitter4j.** { *; }
+
+    -keep class com.tencent.** {*;}
+    -dontwarn com.tencent.**
+    -keep public class com.umeng.com.umeng.soexample.R$*{
+    public static final int *;
+    }
+    -keep public class com.linkedin.android.mobilesdk.R$*{
+    public static final int *;
+        }
+    -keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+    }
+
+    -keep class com.tencent.open.TDialog$*
+    -keep class com.tencent.open.TDialog$* {*;}
+    -keep class com.tencent.open.PKDialog
+    -keep class com.tencent.open.PKDialog {*;}
+    -keep class com.tencent.open.PKDialog$*
+    -keep class com.tencent.open.PKDialog$* {*;}
+
+    -keep class com.sina.** {*;}
+    -dontwarn com.sina.**
+    -keep class  com.alipay.share.sdk.** {
+       *;
+    }
+    -keepnames class * implements android.os.Parcelable {
+    public static final ** CREATOR;
+    }
+
+    -keep class com.linkedin.** { *; }
+    -keepattributes Signature
+
+#    友盟分享结束
+
+# 畅言开始
+-dontwarn com.avos.avoscloud.**
+
+-keep class android.net.http.** { *;}
+
+-keep class android.content.** { *; }
+
+-keep class android.support.v4.** { *; }
+-keep class com.sina.** { *; }
+-keep class com.weibo.** {*; }
+-keep class com.tencent.** {*; }
+-keep class com.sohu.cyan.android.sdk.api.** { *;}
+-keep class com.sohu.cyan.android.sdk.push.** { *;}
+-keep class com.sohu.cyan.android.sdk.entity.** { *;}
+-keep class com.sohu.cyan.android.sdk.response.** { *;}
+-keep class com.sohu.cyan.android.sdk.http.** { *;}
+-keep class com.google.gson.JsonObject { *; }
+-keep class com.badlogic.** { *; }
+-keep class * implements com.badlogic.gdx.utils.Json*
+-keep class com.google.** { *; }
+
+-keepattributes Signature
+
+-keepclasseswithmembernames class * {                                           # 保持 native 方法不被混淆
+    native <methods>;
+}
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context);
+}
+
+
+-keepclasseswithmembers class * {                                               # 保持自定义控件类不被混淆
+    public <init>(android.content.Context, android.util.AttributeSet);
+}
+
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet, int);     # 保持自定义控件类不被混淆
+}
+
+-keepclassmembers class * extends android.app.Activity {                        # 保持自定义控件类不被混淆
+   public void *(android.view.View);
+}
+
+-keepclassmembers enum * {                                                      # 保持枚举 enum 类不被混淆
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+-keep class * implements android.os.Parcelable {                                # 保持 Parcelable 不被混淆
+  public static final android.os.Parcelable$Creator *;
+}
+
+
+-keepclassmembers class com.sohu.cyan.android.sdk.activity.ShareActivity {
+	public *;
+}
+
+-keepclassmembers class * extends android.app.Activity {
+   public void *(android.view.View);
+}
+
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+#保护指定的类文件和类的成员
+-keep class * implements android.os.Parcelable {
+  public static final android.os.Parcelable$Creator *;
+}
+# 畅言结束
+
+
+# 魔窗
+-keep class com.tencent.mm.sdk.** {*;}
+-keep class cn.magicwindow.** {*;}
+-dontwarn cn.magicwindow.**
+
+#信鸽推送混淆
+-keep public class * extends android.app.Service
+-keep public class * extends android.content.BroadcastReceiver
+-keep class com.tencent.android.tpush.** {* ;}
+-keep class com.tencent.mid.** {* ;}
+-keep class com.qq.taf.jce.** {*;}
+
+#Picasso混淆配置
+-keep class com.parse.*{ *; }
+-dontwarn com.parse.**
+-dontwarn com.squareup.picasso.**
+-keepclasseswithmembernames class * {
+    native <methods>;
 }
